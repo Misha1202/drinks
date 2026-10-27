@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вкусные напитки</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --card: #161920;
+    --card2: #1c2029;
+    --accent: #ff6a3d;
+    --accent2: #ffb800;
+    --text: #eef1f6;
+    --muted: #98a0ad;
+    --line: #262b35;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Названия продуктов и названия напитков */
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: 90px 20px 70px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: -20% -10%;
+    background:
+      radial-gradient(circle at 25% 20%, rgba(255,106,61,.25), transparent 45%),
+      radial-gradient(circle at 75% 30%, rgba(255,184,0,.22), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(120,80,255,.20), transparent 50%);
+    filter: blur(30px);
+    z-index: 0;
+  }
+  .hero > * { position: relative; z-index: 1; }
+
+  .badge {
+    display: inline-block;
+    padding: 8px 18px;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 22px;
+    background: rgba(255,255,255,.03);
+  }
+
+  h1 {
+    font-size: clamp(38px, 6vw, 68px);
+    font-weight: 800;
+    line-height: 1.05;
+    background: linear-gradient(100deg, #fff 0%, #ffcf9e 45%, #ff6a3d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 18px;
+  }
+  .sub {
+    font-size: clamp(16px, 2.2vw, 20px);
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto 34px;
+    line-height: 1.6;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    padding: 14px 22px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    min-width: 130px;
+  }
+  .stat b { display: block; font-size: 24px; margin-bottom: 2px; }
+  .stat span { font-size: 13px; color: var(--muted); }
+
+  /* Плавающие капли */
+  .drop {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 0;
+    background: radial-gradient(circle at 30% 30%, var(--c), transparent 70%);
+    box-shadow: 0 0 24px 4px var(--c);
+    animation: bubble ease-in infinite;
+  }
+  @keyframes bubble {
+    0%   { transform: translateY(110vh) scale(.6); opacity: 0; }
+    20%  { opacity: .8; }
+    100% { transform: translateY(-10vh) scale(1.1); opacity: 0; }
+  }
+
+  /* Секция напитков */
+  .section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+  }
+
+  .card {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 30px 26px;
+    overflow: hidden;
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    animation: cardIn .6s ease both;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255,106,61,.4);
+    box-shadow: 0 20px 50px rgba(0,0,0,.45);
+  }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--c1, var(--accent)), var(--c2, var(--accent2)));
+  }
+
+  .emoji {
+    font-size: 54px;
+    display: inline-block;
+    margin-bottom: 16px;
+    animation: floaty 3s ease-in-out infinite;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,.4));
+  }
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+  .card h3 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .card .desc { color: var(--muted); font-size: 14.5px; line-height: 1.55; margin-bottom: 18px; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .tag {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .meta { text-align: center; }
+  .meta b { display: block; font-size: 20px; }
+  .meta span { font-size: 12px; color: var(--muted); }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 100px;
+    background: rgba(255,106,61,.12);
+    border: 1px solid rgba(255,106,61,.3);
+    color: #ffb79b;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .pill.hot { background: rgba(255,184,0,.12); border-color: rgba(255,184,0,.3); color: #ffd97a; }
+
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid var(--line);
+  }
+  footer b { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">🌍 Лучшие напитки со всего мира</div>
+  <h1>Самые вкусные напитки</h1>
+  <p class="sub">От нежных рафов и матчи до экзотических коктейлей и согревающих хитов — коллекция напитков, которые нельзя пропустить.</p>
+  <div class="hero-stats">
+    <div class="stat"><b>12+</b><span>напитков</span></div>
+    <div class="stat"><b>6</b><span>стран</span></div>
+    <div class="stat"><b>4.9★</b><span>рейтинг</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer>
+  Сделано с <b style="color:#ff6a3d;">♥</b> для ценителей вкуса
+</footer>
+
+<script>
+  const drinks = [
+    { icon:"🥤", name:"Бабл-ти", desc:"Тайваньский чай с желейными шариками и молоком. Идеален с тапиокой.", tags:["Чай","Молочный","Сладкий"], time:"3 мин", kcal:"320", temp:"Холодный", c1:"#ff6a3d", c2:"#ffb800" },
+    { icon:"🍵", name:"Матча латте", desc:"Японский зелёный чай матча с бархатным молоком и лёгкой горчинкой.", tags:["Чай","Кофеиновый","Веган-опция"], time:"4 мин", kcal:"180", temp:"Горячий", c1:"#6fcf97", c2:"#2d9c6a" },
+    { icon:"☕", name:"Раф", desc:"Нежный молочный кофе с ванилью и сливками — тает на языке.", tags:["Кофе","Молочный"], time:"5 мин", kcal:"410", temp:"Горячий", c1:"#a9825b", c2:"#d9b48f" },
+    { icon:"🧋", name:"Мильк-шейк", desc:"Пышный холодный коктейль из мороженого и молока с любым топпингом.", tags:["Молочный","Десерт"], time:"5 мин", kcal:"580", temp:"Холодный", c1:"#e08cff", c2:"#9b59b6" },
+    { icon:"🍓", name:"Смузи клубничный", desc:"Свежая клубника, банан и йогурт — заряд витаминов на весь день.", tags:["Фруктовый","Здоровый"], time:"3 мин", kcal:"220", temp:"Холодный", c1:"#ff7d9d", c2:"#e84a68" },
+    { icon:"🍋", name:"Лимонад цитрусовый", desc:"Освежающий лимон, лайм и мята со льдом на газированной воде.", tags:["Освежающий","Низкокалорийный"], time:"2 мин", kcal:"90", temp:"Холодный", c1:"#f9e547", c2:"#ffb800" },
+    { icon:"🍫", name:"Горячий шоколад", desc:"Густой шоколад с молоком, маршмеллоу и корицей. Согревает в любой холод.", tags:["Десерт","Согревающий"], time:"6 мин", kcal:"480", temp:"Горячий", c1:"#7a4a2b", c2:"#4a2a15" },
+    { icon:"🥥", name:"Кокосовое латте", desc:"Тропический кокос с эспрессо и сливками — как отпуск в стакане.", tags:["Кофе","Тропический","Веган-опция"], time:"4 мин", kcal:"250", temp:"Горячий", c1:"#f0e2c4", c2:"#b99a6b" },
+    { icon:"🍓", name:"Фраппе ягодное", desc:"Ледяная смесь ягод с молоком, взбитая до кремовой текстуры.", tags:["Ягодный","Холодный"], time:"4 мин", kcal:"340", temp:"Холодный", c1:"#c084fc", c2:"#7c3aed" },
+    { icon:"🍹", name:"Мохито", desc:"Кубинский коктейль из рома, мяты, лайма и содовой со льдом.", tags:["Алкогольный","Освежающий"], time:"4 мин", kcal:"200", temp:"Холодный", c1:"#6fcf97", c2:"#27ae60" },
+    { icon:"🌿", name:"Чай улун", desc:"Полуферментированный чай с цветочным ароматом и мягким послевкусием.", tags:["Чай","Здоровый","Без кофеина*"], time:"3 мин", kcal:"10", temp:"Горячий", c1:"#d9b48f", c2:"#a9825b" },
+    { icon:"🐻", name:"Какао с маршмеллоу", desc:"Нежное какао с пышными зефирками — любимец детей и взрослых.", tags:["Десерт","Согревающий"], time:"5 мин", kcal:"380", temp:"Горячий", c1:"#ffb8c6", c2:"#ff7d9d" }
+  ];
+
+  const grid = document.getElementById('grid');
+  drinks.forEach((d, i) => {
+    const hot = d.temp === "Горячий";
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.setProperty('--c1', d.c1);
+    card.style.setProperty('--c2', d.c2);
+    card.style.animationDelay = (i * 0.06) + 's';
+    card.innerHTML = `
+      <div class="pill ${hot ? 'hot' : ''}">${hot ? '🔥' : '❄️'} ${d.temp}</div>
+      <div class="emoji">${d.icon}</div>
+      <h3>${d.name}</h3>
+      <div class="desc">${d.desc}</div>
+      <div class="tags">${d.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="meta-row">
+        <div class="meta"><b>${d.time}</b><span>время</span></div>
+        <div class="meta"><b>${d.kcal}</b><span>ккал</span></div>
+        <div class="meta"><b>${hot ? '☕' : '🧊'}</b><span>температура</span></div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // Пузырьки на фоне
+  for (let i = 0; i < 18; i++) {
+    const d = document.createElement('div');
+    d.className = 'drop';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.setProperty('--c', ['#ff6a3d', '#ffb800', '#e08cff', '#6fcf97', '#ff7d9d'][Math.floor(Math.random() * 5)]);
+    d.style.filter = 'blur(2px)';
+    const size = 8 + Math.random() * 22;
+    d.style.width = size + 'px';
+    d.style.height = size + 'px';
+    d.style.animationDuration = (9 + Math.random() * 10) + 's';
+    d.style.animationDelay = (Math.random() * 12) + 's';
+    document.body.appendChild(d);
+  }
+</script>
+
+</body>
+</html>
